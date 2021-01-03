@@ -23,21 +23,29 @@
         
         mylib = mach-nix.lib.${system}; # adds mkPython, mkPythonShell, etc. 
 
-        myPython = mylib.mkPython rec {
-          requirements = ''
-            jupyterlab
-            matplotlib
-            numpy
-            torch
-            scipy
-            scikitlearn
-            torchvision
-          '';          
-        };
+        # myPython = mylib.mkPython rec {
+        #   requirements = ''
+        #     jupyterlab
+        #     matplotlib
+        #     numpy
+        #     torch
+        #     scipy
+        #     scikitlearn
+        #     torchvision
+        #   '';          
+        # };
+
+        myPython = (pkgs.python37.withPackages (p: with p; [
+          pytorchWithCuda
+          jupyterlab
+          torchvision
+          matplotlib
+        ])).override (_ : { ignoreCollisions = true; });
 
         myShell = pkgs.mkShell rec {
           buildInputs = [
             myPython
+            pkgs.conda
           ];
           
           shellHook = ''
