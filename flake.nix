@@ -8,14 +8,11 @@
     flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
       let
         
-        # pkgs = nixpkgs.legacyPackages.${system};
-
         pkgs = import nixpkgs {
           inherit system;
           config = {
             allowUnfree = true;
             allowBroken = true;
-            # allowUnsupportedSystem = true;
           };
         };
 
@@ -24,10 +21,9 @@
           inherit pkgs;
         };
 
-        pytorch-gpu = machNix.nixpkgs.python37Packages.pytorchWithCuda.overrideAttrs
-          (old: { pname = "pytorch";});
+        pytorch-gpu = machNix.nixpkgs.python37Packages.pytorchWithCuda;
   
-        pyEnv = machNix.mkPython rec {
+        myPython = machNix.mkPython rec {
 
           requirements = ''
             # torch-gpu
@@ -44,21 +40,23 @@
           #   _default = "nixpkgs,wheel,sdist";
           #   dataclasses = "wheel";
           #   };
+          
         };
 
         devShell = pkgs.mkShell rec {
           buildInputs = [
-            pyEnv
+            myPython
           ];
           
           shellHook = ''
             jupyter lab --notebook-dir=./
           '';
         };
-        
+
+        defaultPackage = myPython;
+
       in {
-        inherit devShell;
-        packages = { inherit pytorch-gpu; } ;
+        inherit devShell defaultPackage;
       }
     );
 }
