@@ -20,37 +20,55 @@
             # allowUnsupportedSystem = true;
           };
         };
-        
-        mylib = mach-nix.lib.${system}; # adds mkPython, mkPythonShell, etc. 
 
-        myPython = mylib.mkPython rec {
-          requirements = ''
-            jupyterlab
-            matplotlib
-            numpy
-            torch
-            scipy
-            scikitlearn
-            torchvision
-          '';          
+        # myPython = pkgs.python37.withPackages ( p: with p; [
+        #     pytorchWithCuda
+        #     jupyterlab
+        #     conda
+        #     torchvision
+        # ]);
+
+        machNix = import mach-nix {
+          python = "python37";
+          inherit pkgs;
         };
 
-        myShell = pkgs.mkShell rec {
+        pytorch-gpu = machNix.nixpkgs.python37Packages.pytorchWithCuda.overrideAttrs
+          (old: { pname = "pytorch";});
+  
+        pyEnv = machNix.mkPython rec {
+
+          requirements = ''
+            # torch-gpu
+            jupyterlab
+            # torchvision
+            # matplotlib
+            # scipy
+            # scikit-learn
+          '';
+
+          packagesExtra = [ pytorch-gpu ];
+          
+          # providers = {
+          #   _default = "nixpkgs,wheel,sdist";
+          #   dataclasses = "wheel";
+          #   };
+        };
+
+        devShell = pkgs.mkShell rec {
           buildInputs = [
-            myPython
+            pyEnv
           ];
           
           shellHook = ''
-            jupyter lab --notebook-dir=~/
+            jupyter lab --notebook-dir=./
           '';
         };
-          
-        devShell = myShell;
-        defaultPackage = myPython;
         
       in {
         inherit devShell;
-        defaultPackage = myPython;
+        packages = { inherit pytorch-gpu; } ;
+        # inherit defaultPackage;
       }
     );
 }
