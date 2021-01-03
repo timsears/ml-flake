@@ -3,8 +3,6 @@
   inputs.nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
   inputs.flake-utils.url = "github:numtide/flake-utils";
   inputs.mach-nix.url = "github:DavHau/mach-nix";
-  inputs.jupyterWith.url = "github:tweag/jupyterWith";
-  inputs.jupyterWith.flake = false;
   
   outputs = {self, ... }@inputs : with inputs;
     flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
@@ -20,13 +18,6 @@
             # allowUnsupportedSystem = true;
           };
         };
-
-        # myPython = pkgs.python37.withPackages ( p: with p; [
-        #     pytorchWithCuda
-        #     jupyterlab
-        #     conda
-        #     torchvision
-        # ]);
 
         machNix = import mach-nix {
           python = "python37";
@@ -68,7 +59,6 @@
       in {
         inherit devShell;
         packages = { inherit pytorch-gpu; } ;
-        # inherit defaultPackage;
       }
     );
 }
