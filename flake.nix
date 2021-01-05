@@ -15,7 +15,7 @@
             allowBroken = true;
           };
         };
-        
+
         myPython = (pkgs.python37.withPackages (p: with p; [
           pytorchWithCuda
           jupyterlab
@@ -36,7 +36,6 @@
         };
           
         devShell = myShell;
-
         defaultPackage = myPython;
         
       in {
