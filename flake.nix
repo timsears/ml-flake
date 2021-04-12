@@ -1,8 +1,8 @@
 {
   description = "Dev shell for machine learning";
-  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+  inputs.nixpkgs.url = "flake:nixpkgs-unstable";
   inputs.flake-utils.url = "github:numtide/flake-utils";
-  inputs.mach-nix.url = "github:DavHau/mach-nix";
+  # inputs.mach-nix.url = "github:DavHau/mach-nix";
   
   outputs = {self, ... }@inputs : with inputs;
     flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
@@ -16,11 +16,17 @@
           };
         };
 
-        myPython = (pkgs.python37.withPackages (p: with p; [
-          pytorchWithCuda
+        myPython = (pkgs.python3.withPackages (p: with p; [
           jupyterlab
-          torchvision
+          ipywidgets
           matplotlib
+          pyro-ppl
+          #pytorchWithCuda
+          pytorch-bin
+          pytorch-lightning
+          scikitlearn
+          tensorflow-tensorboard_2
+          torchvision
         ])).override (_ : { ignoreCollisions = true; });
 
         myShell = pkgs.mkShell rec {
@@ -31,7 +37,7 @@
           ];
           
           shellHook = ''
-            jupyter lab --notebook-dir=~/
+            jupyter lab --ip="0.0.0.0" --notebook-dir="~/" --no-browser
           '';
         };
           
