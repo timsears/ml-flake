@@ -1,22 +1,30 @@
+
 {
   description = "Dev shell for machine learning";
-  inputs.nixpkgs.url = "flake:nixpkgs-unstable";
+  inputs.nixpkgs.url = "nixpkgs-unstable";
   inputs.flake-utils.url = "github:numtide/flake-utils";
-  # inputs.mach-nix.url = "github:DavHau/mach-nix";
-  
+  inputs.mach-nix.url = "github:DavHau/mach-nix";
+
   outputs = {self, ... }@inputs : with inputs;
     flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
       let
-        
+
         pkgs = import nixpkgs {
           inherit system;
           config = {
             allowUnfree = true;
             allowBroken = true;
+            overlays = final: prev: {
+              python38 = prev.python38.override {
+                packageOverrides = pyfinal: pyprev: {
+                  pytorch-lightning = pyfinal.python3.pkgs.callPackage ./pytorch-lightning { };
+                };
+              };
+            };
           };
         };
-
-        myPython = (pkgs.python3.withPackages (p: with p; [
+    
+        myPython = (pkgs.python38.withPackages (p: with p; [
           jupyterlab
           ipywidgets
           matplotlib
@@ -44,8 +52,9 @@
         devShell = myShell;
         defaultPackage = myPython;
         
-      in {
-        inherit devShell defaultPackage;
-      }
+      in
+        {
+          inherit devShell defaultPackage;
+        }
     );
 }
