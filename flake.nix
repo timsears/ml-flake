@@ -40,31 +40,22 @@
             pyro-ppl
             #pytorchWithCuda
             #pytorch-bin
-            #torch
+            torch
             pytorch-lightning
             PyYAML == 5.3.1
             scikit-learn
             tensorboard
             torchvision
           '' ;
-          providers.torch = "nixpkgs";
-          overridesPost = [(curr: prev: {
-            torch = prev.torch.override {
-              cudaSupport = true;
-            };
-          })];
-          # packagesExtra = [
-          # jupyterlab
-          # ipywidgets
-          # matplotlib
-          # pyro-ppl
-          # #pytorchWithCuda
-          # pytorch-bin
-          # #pytorch-lightning
-          # scikitlearn
-          # tensorflow-tensorboard_2
-          # torchvision
-          # ];
+          # providers.torch = "nixpkgs";
+          # overridesPost = [(curr: prev: {
+          #   torch = prev.torch.override {
+          #     cudaSupport = true;
+          #   };
+          # })];
+          packagesExtra = [
+          #pkgs.python38Packages.pytorchWithCuda # fails with pname error
+          ];
         };
     #)).override (_ : { ignoreCollisions = true; });
 
