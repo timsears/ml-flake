@@ -67,7 +67,9 @@
 
 
           shellHook = ''
-            jupyter lab --ip="0.0.0.0" --notebook-dir="~/" --no-browser
+            CMD="jupyter lab --ip=0.0.0.0 --notebook-dir=~/ --no-browser"
+            echo $CMD
+            $CMD
           '';
         };
           
