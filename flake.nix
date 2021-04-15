@@ -20,6 +20,7 @@
           config = {
             allowUnfree = true;
             allowBroken = true;
+            cudaSupport = true;
             # overlays = final: prev: {
             #   python38 = prev.python38.override {
             #     packageOverrides = pyfinal: pyprev: {
@@ -33,28 +34,26 @@
         #myPython = (pkgs.python38.withPackages (p: with p; [
         myPython = machnix.mkPython {
           requirements = '' 
-            pytorch-lightning 
-            jupyterlab
             ipywidgets
+            jupyterlab
             matplotlib
             pyro-ppl
-            #pytorchWithCuda
-            #pytorch-bin
-            torch
             pytorch-lightning
             PyYAML == 5.3.1
             scikit-learn
+            torch
             tensorboard
             torchvision
           '' ;
-          # providers.torch = "nixpkgs";
+          providers.torch = "nixpkgs";
+          # 
           # overridesPost = [(curr: prev: {
           #   torch = prev.torch.override {
           #     cudaSupport = true;
           #   };
           # })];
           packagesExtra = [
-          #pkgs.python38Packages.pytorchWithCuda # fails with pname error
+          # pkgs.python38Packages.pytorchWithCuda # fails with pname error
           ];
         };
     #)).override (_ : { ignoreCollisions = true; });
@@ -68,7 +67,7 @@
 
 
           shellHook = ''
-            jupyter notebook --ip="0.0.0.0" --notebook-dir="~/" --no-browser
+            jupyter lab --ip="0.0.0.0" --notebook-dir="~/" --no-browser
           '';
         };
           
