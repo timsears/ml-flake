@@ -67,9 +67,10 @@
 
 
           shellHook = ''
+            echo "run this to launch ..."
             CMD="jupyter lab --ip=0.0.0.0 --notebook-dir=~/ --no-browser"
             echo $CMD
-            $CMD
+            #$CMD
           '';
         };
           
